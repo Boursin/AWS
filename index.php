@@ -1,14 +1,25 @@
 <?php
-$response = file_get_contents('https://www.ygohub.com/api/all_cards');
+$response = file_get_contents('https://swapi.co/api/people/');
 $response = json_decode($response,true);
-echo "Yu Gi Oh Cards <br>";
+echo "<h1>Star Wars</h1> <br>";
 
-foreach ( $response['cards'] as $cardname )
+$count=1;
+foreach ( $response['results'] as $resultsName )
 {
-	echo $cardname." <br> " ;
+	
+	$resultsName = file_get_contents('https://swapi.co/api/people/'.$count);
+	$resultsName = json_decode($resultsName,true);
 
-	$cardname = file_get_contents('https://www.ygohub.com/api/card_info?name='.$cardname);
-	$cardname = json_decode($cardname,true);
-	//echo $cardname["card"]["type"]."<br>";
+	echo "<br>Name : ".$resultsName["name"].
+		"<br> Gender :".$resultsName["gender"].
+		"<br> Height : ".$resultsName["height"].
+		"<br> Mass : ".$resultsName["mass"].
+		"<br> Skin Color : ".$resultsName["skin_color"].
+		"<br> Hair Color : ".$resultsName["hair_color"].
+		"<br> Eye Color : ".$resultsName["eye_color"].
+		"<br> Birth Year : ".$resultsName["birth_year"].
+		"<br> Origin : ".$resultsName["homeworld"].
+		"<br>";
+	$count++;
 	
 }
