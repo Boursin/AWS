@@ -1,3 +1,31 @@
 language: php
 php:
-  - '7.0'
+- '7.0'
+deploy:
+- provider: s3
+  region: eu-west-1
+  access_key_id: AKIAJ47HTFKYGURE4A4A
+  secret_access_key: &1
+    secure: oixHDJnRDUEVfXpdlPXF6w0BUZG7Rxxu4zwXklYw0n/0Qpqr0+eVIYYTTiywWwJkyjXYKrh7EPAPcjHviw+405hEtp2nL6QvIfq3Pz6h8hmK3/ekzMwf0AVCuBaDrBgOdEH0iU9ufKtX7Mr2RehD0JRE9fEJfzIoo3kpnkyiJchvvUpZFsingUg61AgvcKBvigxh3E+hn2rwQUWSNOuUO7gCA4RkipQ++JBlGsTyXw+ta2IrVtxPfGsk18dAGD8bb7BrZFKtse7HPiHSlR7VyiSLNgIimejX4nlEAS+AJnjaenxjJzVPsVB7ufdTjD8Iz+LQeBQY6z23zkgaBAJgVdjQ4JefyUJUJ/YZY+HqUxtL5iXnvBUznsLKRiPV+7BiHDEcqEM/mBqvNBNU0NZ3+yPNuMPIpDUL4Lc4XcCDYhqEXiVxB1A6uc02vK7e2Y/Qjz1C79CzHyT/Mov5Red7P2rsMF7HkpnMtMvC+FgPRAHKJ3QTWcVVFgElmxoqWtXQRsq92c+63xoUmq4mb1uDtm23nXswsdQ6o12UQuIc72Xf6U72KVhRq/VFQnVOP+WlsoN5h6K4zEosDdkpPTcosWlxkBe7091Gpt/ct3aSNpCEkauV0VVePqRVy+vwAN11ImRQ5oaQIaooWwR6YUAvjEEpotYaFZ6RbZpyxuY5Vj4=
+  local_dir: dpl_cd_upload
+  skip_cleanup: true
+  on: &2
+    repo: Boursin/AWS
+  bucket: aws-bucket-boursin
+  upload_dir: latest
+- provider: codedeploy
+  region: eu-west-1
+  access_key_id: AKIAJ47HTFKYGURE4A4A
+  secret_access_key: *1
+  bucket: aws-bucket-boursin
+  key: latest/MyApp.zip
+  bundle_type: zip
+  application: aws-app-boursin
+  deployment_group: boursin
+  on: *2
+before_deploy:
+- zip MyApp -r *
+- mkdir -p dpl_cd_upload
+- mv MyApp.zip dpl_cd_upload/MyApp.zip
+script:
+- phpunit --coverage-clover --bootstrap test.php
